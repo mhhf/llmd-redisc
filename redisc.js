@@ -40,7 +40,7 @@ LLMD.registerPackage("redisc", {
     
     if( ast.root ) {
       Atoms.update({_id: ast.root},{ 
-        $set: {updatedOn: new Date()},
+        $set: { updatedOn: new Date()},
         $inc: { comments: 1 }
       });
     }
