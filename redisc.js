@@ -14,10 +14,18 @@ LLMD.registerPackage("redisc", {
     
     this.tags = [];
     this.root = '';
-    this.parent = '';
     
     this.createdOn = new Date();
     this.updatedOn = new Date();
+    
+    
+    var usr = Meteor.user();
+    
+    this.user = {
+      name: usr.username || usr.profile && usr.profile.name,
+      _id: Meteor.userId()
+    }
+    
     
   },
   nested: ['nested'],
@@ -43,6 +51,8 @@ LLMD.registerPackage("redisc", {
         $set: { updatedOn: new Date()},
         $inc: { comments: 1 }
       });
+    } else {
+      ast.comments += 1;
     }
     
     cb( null, ast );
