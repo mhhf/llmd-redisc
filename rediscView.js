@@ -20,7 +20,9 @@ Template.llmd_redisc_edit.rendered = function(){
   var self = this;
   console.log(this);
   
-  var data = ( this.data.atom && this.data.atom.data ) || ''; 
+  var atom = this.data.get && this.data.get();
+  
+  var data = ( atom && atom.data ) || ''; 
   // var code = ( this.data.atom && this.data.atom.code ) || ''; 
   
   var dataEditor = CodeMirror(this.find('#editor'),{
@@ -60,7 +62,16 @@ Template.llmd_redisc_edit.rendered = function(){
 
 Template.llmd_redisc_edit.helpers({
   isRoot: function(){
-    return !this.atom || this.atom.root == '';
+    var atom = this && this.get && this.get();
+    return !atom || atom.root == '';
+  },
+  getTitle: function(){
+    var atom = this && this.get && this.get();
+    return atom && atom.title;
+  },
+  getTags: function(){
+    var atom = this && this.get && this.get();
+    return atom && atom.tags;
   }
 });
 

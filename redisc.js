@@ -36,7 +36,16 @@ LLMD.registerPackage("redisc", {
   // [TODO] - is it really nessesery?
   preprocess: function( ast, cb ){
     
-      cb( null, ast );
+    ast.updatedOn = new Date();
+    
+    if( ast.root ) {
+      Atoms.update({_id: ast.root},{ 
+        $set: {updatedOn: new Date()},
+        $inc: { comments: 1 }
+      });
+    }
+    
+    cb( null, ast );
     
   }
 });
