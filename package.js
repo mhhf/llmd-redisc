@@ -16,5 +16,6 @@ Package.on_use(function (api) {
   api.add_files("redisc.js", ["client","server"]);
   api.add_files("rediscView.html", ["client"]);
   api.add_files("rediscView.js", ["client"]);
+  api.add_files("rediscView.less", ["client"]);
 
 });

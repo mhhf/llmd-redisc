@@ -13,15 +13,15 @@
     
     <div class="btn-group">
       <button type="button" data-target="editor" class="btn editorView btn-default {{isActive 'editor'}}"><i class="fa fa-list-alt"></i></button>
-      {{#unless llmdEngine}}
       <button type="button" data-target="split" class="btn editorView btn-default {{isActive 'split'}}"><i class="fa fa-columns"></i></button>
-      {{/unless}}
       <button type="button" data-target="preview" class="btn editorView btn-default {{isActive 'preview'}}"><i class="fa fa-eye"></i></button>
     </div>
     
     <div class="editorWrapper">
       <div id="editor" class="{{getEditorClass}}"></div>
-      <div id="preview-md" class="{{getViewClass}}"></div>
+      <div id="preview-md" class="{{getViewClass}}">
+        {{>llmd getEditorData }}
+      </div>
     </div>
 
     <span class="help-block"></span>
