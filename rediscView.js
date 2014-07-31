@@ -122,7 +122,7 @@ Template.llmd_redisc_edit.helpers({
   },
   getTags: function(){
     var atom = this && this.get && this.get();
-    return atom && atom.tags;
+    return atom && atom.tags || this.ctx;
   },
   isActive: function( key ){
     this._editorDeps.depend();
