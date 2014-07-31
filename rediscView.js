@@ -24,6 +24,7 @@ Template.llmd_redisc_edit.events = {
     if( target != this._active ) {
       this._active = target;
       this._editorDeps.changed();
+      this._valueDeps.changed();
     }
     
     
@@ -50,6 +51,7 @@ Template.llmd_redisc_edit.rendered = function(){
   var atom = this.data.get && this.data.get();
   
   var data = ( atom && atom.data ) || ''; 
+  this.data._data = data;
   // var code = ( this.data.atom && this.data.atom.code ) || ''; 
   
   var dataEditor = CodeMirror(this.find('#editor'),{
@@ -62,6 +64,7 @@ Template.llmd_redisc_edit.rendered = function(){
   dataEditor.on('change', function(cm){
     self.data._data = cm.getValue();
     if( !self.data._updateInterval ) {
+      self.data._valueDeps.changed();
       self.data._updateInterval = setInterval( function(){
         self.data._valueDeps.changed();
         if(+new Date() - self.data._lastEdit > 1000 ) {
