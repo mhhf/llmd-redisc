@@ -60,11 +60,9 @@ LLMD.registerPackage("redisc", {
     
     // each tag
     ast.tags && ast.tags.forEach( function( tag ){
-      console.log('tag', tag);
       var tagO = GlobalTags.findOne({ _id: tag });
       if( !tagO ) GlobalTags.insert({ _id: tag, _remoteIds: [ ast._id ], rate:1 });
       else if( tagO._remoteIds.indexOf( ast._id ) == -1 ) {
-        console.log('tag found', tagO.rate);
         GlobalTags.update({_id: tag}, { 
           $addToSet:{ _remoteIds: ast._id }, 
           $inc: { rate: 1 } 
