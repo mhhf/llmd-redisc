@@ -127,6 +127,12 @@ Template.llmd_redisc_edit.helpers({
     var atom = this && this.get && this.get();
     return atom && atom.tags || this.ctx;
   },
+  getGlobalTags: function(){
+    var atom = this && this.get && this.get();
+    var selected = atom && atom.tags || this.ctx;
+    var tags = _.pluck(GlobalTags.find().fetch(),'_id');
+    return _.difference( tags, selected );
+  },
   isActive: function( key ){
     this._editorDeps.depend();
     return this._active == key?'active':'';

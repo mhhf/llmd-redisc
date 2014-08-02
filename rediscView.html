@@ -39,6 +39,9 @@
       {{#each getTags}}
       <option value="{{this}}" selected>{{this}}</option>
       {{/each}}
+      {{#each getGlobalTags}}
+      <option value="{{this}}">{{this}}</option>
+      {{/each}}
     </select>
     <span class="help-block"></span>
   </div>
