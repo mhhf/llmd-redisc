@@ -41,7 +41,10 @@ LLMD.registerPackage("redisc", {
   //   
   //   return data;
   // },
-  // [TODO] - is it really nessesery?
+  
+  
+  
+  // is fired on an atom inside the collection
   preprocess: function( ast, cb ){
     
     ast.updatedOn = new Date();
@@ -54,6 +57,21 @@ LLMD.registerPackage("redisc", {
     } else {
       ast.comments += 1;
     }
+    
+    // each tag
+    ast.tags && ast.tags.forEach( function( tag ){
+      console.log('tag', tag);
+      var tagO = GlobalTags.findOne({ _id: tag });
+      if( !tagO ) GlobalTags.insert({ _id: tag, _remoteIds: [ ast._id ], rate:1 });
+      else if( tagO._remoteIds.indexOf( ast._id ) == -1 ) {
+        console.log('tag found', tagO.rate);
+        GlobalTags.update({_id: tag}, { 
+          $addToSet:{ _remoteIds: ast._id }, 
+          $inc: { rate: 1 } 
+        });
+      }
+     
+    });
     
     cb( null, ast );
     
