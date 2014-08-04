@@ -15,7 +15,42 @@ PluginHandler.registerPlugin( "md", RediscPlugin );
 
 
 Template.llmd_redisc_edit.events = {
-  
+  "dragenter .dragWrapper": function(e,t){
+    e.stopPropagation();
+    e.preventDefault(); 
+    
+    // $('.dragWrapper').addClass('hover');
+    $('.dragMask').addClass('show');
+    // console.log('e');
+  },
+  "dragleave .dragMask": function(e,t){
+    e.stopPropagation();
+    e.preventDefault(); 
+    
+    $('.dragMask').removeClass('show');
+    console.log('l');
+  },
+  "dragover .dragWrapper": function(e,t){
+    e.stopPropagation();
+    e.preventDefault(); 
+  },
+  "drop .dragMask": function(e,t){
+    
+    e.stopPropagation();
+    e.preventDefault(); 
+    
+    $('.dragMask').removeClass('show');
+    
+    var files = e.originalEvent.dataTransfer.files;
+    var file = new FS.File(files[0]);
+    
+    var i = Files.insert(file, function(err, succ){ 
+      console.log(err,succ);
+    });
+    // 
+    // image.set(i._id);
+    // console.log(image.get());
+  },
   "click .btn.editorView": function(e,t){
     e.preventDefault();
     
@@ -53,12 +88,20 @@ Template.llmd_redisc_edit.rendered = function(){
   var data = ( atom && atom.data ) || ''; 
   this.data._data = data;
   // var code = ( this.data.atom && this.data.atom.code ) || ''; 
+  // 
+  // 
+  
+  
+  var isReply = this.data.parents && this.data.parents.length != 0;
+  var isRoot = !isReply || atom && atom.root == '';
   
   var dataEditor = CodeMirror(this.find('#editor'),{
     value: data,
     mode:  "markdown",
     lineNumbers: true,
-    lines: 10
+    lines: 10,
+    dragDrop: false,
+    autofocus: !isRoot
   });
   
   dataEditor.on('change', function(cm){
@@ -117,7 +160,9 @@ Template.llmd_redisc_edit.helpers({
   },
   isRoot: function(){
     var atom = this && this.get && this.get();
-    return !atom || atom.root == '';
+    var isReply = this.parents && this.parents.length != 0;
+    var isRoot = !isReply || atom && atom.root == '';
+    return isRoot;
   },
   getTitle: function(){
     var atom = this && this.get && this.get();
