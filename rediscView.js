@@ -13,7 +13,6 @@ RediscPlugin = BasicPlugin.extend({
 PluginHandler.registerPlugin( "md", RediscPlugin );
 
 
-
 Template.llmd_redisc_edit.events = {
   "dragenter .dragWrapper": function(e,t){
     e.stopPropagation();
@@ -94,6 +93,34 @@ Template.llmd_redisc_edit.created = function(){
   
 }
 
+
+Template.llmd_redisc_edit.config = function () {
+  var self = this;
+  return function(editor) {
+    console.log(this);
+    self._ace = editor;
+    editor.setTheme('ace/theme/monokai');
+    editor.getSession().setMode('ace/mode/markdown');
+    editor.setShowPrintMargin(false);
+    editor.getSession().setUseWrapMode(true);
+    editor.on('change', function( e ){
+      self._data = editor.getValue();
+      if( !self._updateInterval ) {
+        self._valueDeps.changed();
+        self._updateInterval = setInterval( function(){
+          self._valueDeps.changed();
+          if(+new Date() - self._lastEdit > 1000 ) {
+            clearInterval( self._updateInterval );
+            self._updateInterval = null;
+          }
+        },1000);
+      }
+      self._lastEdit = +new Date(); 
+    });
+  }
+};
+
+
 var tags = [];
 Template.llmd_redisc_edit.rendered = function(){
   
@@ -111,29 +138,29 @@ Template.llmd_redisc_edit.rendered = function(){
   var isReply = this.data.parents && this.data.parents.length != 0;
   var isRoot = !isReply || atom && atom.root == '';
   
-  this.data._dataEditor = CodeMirror(this.find('#editor'),{
-    value: data,
-    mode:  "markdown",
-    lineNumbers: true,
-    lines: 10,
-    dragDrop: false,
-    autofocus: !isRoot
-  });
+  // this.data._dataEditor = CodeMirror.fromTextArea(this.find('#editorArea'),{
+  //   value: data,
+  //   mode:  "markdown",
+  //   lineNumbers: true,
+  //   lines: 10,
+  //   dragDrop: false,
+  //   autofocus: !isRoot
+  // });
   
-  this.data._dataEditor.on('change', function(cm){
-    self.data._data = cm.getValue();
-    if( !self.data._updateInterval ) {
-      self.data._valueDeps.changed();
-      self.data._updateInterval = setInterval( function(){
-        self.data._valueDeps.changed();
-        if(+new Date() - self.data._lastEdit > 1000 ) {
-          clearInterval( self.data._updateInterval );
-          self.data._updateInterval = null;
-        }
-      },1000);
-    }
-    self.data._lastEdit = +new Date(); 
-  });
+  // this.data._dataEditor.on('change', function(cm){
+  //   self.data._data = cm.getValue();
+  //   if( !self.data._updateInterval ) {
+  //     self.data._valueDeps.changed();
+  //     self.data._updateInterval = setInterval( function(){
+  //       self.data._valueDeps.changed();
+  //       if(+new Date() - self.data._lastEdit > 1000 ) {
+  //         clearInterval( self.data._updateInterval );
+  //         self.data._updateInterval = null;
+  //       }
+  //     },1000);
+  //   }
+  //   self.data._lastEdit = +new Date(); 
+  // });
   
   // var codeEditor = CodeMirror(this.find('.codeEditor'),{
   //   value: code,
@@ -154,7 +181,7 @@ Template.llmd_redisc_edit.rendered = function(){
     var title = self.find('input[name=title]') && self.find('input[name=title]').value;
     
     return {
-      data: self.data._dataEditor.getValue(),
+      data: self.data._ace.getValue(),
       // code: codeEditor.getValue(),
       tags: tags,
       title: title
@@ -164,6 +191,9 @@ Template.llmd_redisc_edit.rendered = function(){
 }
 
 Template.llmd_redisc_edit.helpers({
+  onConnect: function(a,b){
+    console.log( this._ace );
+  },
   getEditorData: function(){
     this._valueDeps.depend();
     var self = this;
@@ -179,6 +209,9 @@ Template.llmd_redisc_edit.helpers({
     var isReply = this.parents && this.parents.length != 0;
     var isRoot = !isReply || atom && atom.root == '';
     return isRoot;
+  },
+  getId: function(){
+    return this.get && this.get()._id || '';
   },
   getTitle: function(){
     var atom = this && this.get && this.get();
