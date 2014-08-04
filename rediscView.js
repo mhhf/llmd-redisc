@@ -39,15 +39,31 @@ Template.llmd_redisc_edit.events = {
     e.stopPropagation();
     e.preventDefault(); 
     
-    $('.dragMask').removeClass('show');
+    $('.dragMask').addClass('upload');
     
     var files = e.originalEvent.dataTransfer.files;
     var file = new FS.File(files[0]);
     
-    var i = Files.insert(file, function(err, succ){ 
-      console.log(err,succ);
-    });
-    // 
+    var i = Files.insert( file );
+    Meteor.subscribe('file',i._id);
+    
+    Deps.autorun( function( c ){
+      
+      var f = Files.findOne(i._id); 
+      var url = f.url();
+      if(url) {
+        $('.dragMask').removeClass('show');
+        $('.dragMask').removeClass('upload');
+        window.f = f;
+        var editor = t.data._dataEditor;
+        var img = "\n![File](https://ll-poc.s3.amazonaws.com/f/"+f.copies.files.key+")";
+        editor.replaceRange( img, CodeMirror.Pos(editor.lastLine()) );
+        
+        c.stop();
+      }
+      
+    })
+    
     // image.set(i._id);
     // console.log(image.get());
   },
@@ -95,7 +111,7 @@ Template.llmd_redisc_edit.rendered = function(){
   var isReply = this.data.parents && this.data.parents.length != 0;
   var isRoot = !isReply || atom && atom.root == '';
   
-  var dataEditor = CodeMirror(this.find('#editor'),{
+  this.data._dataEditor = CodeMirror(this.find('#editor'),{
     value: data,
     mode:  "markdown",
     lineNumbers: true,
@@ -104,7 +120,7 @@ Template.llmd_redisc_edit.rendered = function(){
     autofocus: !isRoot
   });
   
-  dataEditor.on('change', function(cm){
+  this.data._dataEditor.on('change', function(cm){
     self.data._data = cm.getValue();
     if( !self.data._updateInterval ) {
       self.data._valueDeps.changed();
@@ -138,7 +154,7 @@ Template.llmd_redisc_edit.rendered = function(){
     var title = self.find('input[name=title]') && self.find('input[name=title]').value;
     
     return {
-      data: dataEditor.getValue(),
+      data: self.data._dataEditor.getValue(),
       // code: codeEditor.getValue(),
       tags: tags,
       title: title
