@@ -1,33 +1,73 @@
 LLMD.registerPackage("redisc", {
-  init: function(){
-    this.data = '';
-    this.title = '';
-    this.code = '';
-    
-    this.upvotes = [];
-    this.downvotes = [];
-    this.score = 0;
-    
-    // [TODO] - refactor nested to children
-    this.nested = [];
-    this.comments = 0;
-    
-    this.tags = [];
-    this.root = '';
-    
-    this.createdOn = new Date();
-    this.updatedOn = new Date();
-    
-    
-    var usr = Meteor.user();
-    
-    this.user = {
-      name: usr.username || usr.profile && usr.profile.name,
-      _id: Meteor.userId()
+  shema: [{
+    data: {
+      type: String,
+      defaultValue: ''
+    },
+    title: {
+      type: String,
+      defaultValue: ''
+    },
+    code: {
+      type: String,
+      defaultValue: ''
+    },
+    upvotes: {
+      type: [String],
+      defaultValue: []
+    },
+    downvotes: {
+      type: [String],
+      defaultValue: [] 
+    },
+    score: {
+      type: Number,
+      defaultValue: 0
+    },
+    nested: {
+      type: [String],
+      defaultValue: []
+    },
+    comments: {
+      type: Number,
+      defaultValue: 0
+    },
+    tags: {
+      type: [String],
+      defaultValue: 0
+    },
+    root: {
+      type: String,
+      defaultValue: ''
+    },
+    createdOn: {
+      type: Date,
+      autoValue: function(){
+        return new Date();
+      }
+    },
+    updatedOn: {
+      type: Date,
+      autoValue: function(){
+        return new Date();
+      }
+    },
+    user: {
+      type: Object
+    },
+    "user.name": {
+      type: String,
+      autoValue: function(){
+        return Meteor.user().profile.name;
+      }
+    },
+    "user._id": {
+      type: String,
+      autoValue: function(){
+        return Meteor.userId();
+      }
     }
-    
-    
-  },
+  }],
   nested: ['nested'],
   // [TODO] - is it really nessesery?
   // dataFilter: function( params, rawData ){

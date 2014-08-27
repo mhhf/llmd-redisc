@@ -138,29 +138,29 @@ Template.llmd_redisc_edit.rendered = function(){
   var isReply = this.data.parents && this.data.parents.length != 0;
   var isRoot = !isReply || atom && atom.root == '';
   
-  // this.data._dataEditor = CodeMirror.fromTextArea(this.find('#editorArea'),{
-  //   value: data,
-  //   mode:  "markdown",
-  //   lineNumbers: true,
-  //   lines: 10,
-  //   dragDrop: false,
-  //   autofocus: !isRoot
-  // });
+  this.data._dataEditor = CodeMirror(this.find('#editor'),{
+    value: data,
+    mode:  "markdown",
+    lineNumbers: true,
+    lines: 10,
+    dragDrop: false,
+    autofocus: !isRoot
+  });
   
-  // this.data._dataEditor.on('change', function(cm){
-  //   self.data._data = cm.getValue();
-  //   if( !self.data._updateInterval ) {
-  //     self.data._valueDeps.changed();
-  //     self.data._updateInterval = setInterval( function(){
-  //       self.data._valueDeps.changed();
-  //       if(+new Date() - self.data._lastEdit > 1000 ) {
-  //         clearInterval( self.data._updateInterval );
-  //         self.data._updateInterval = null;
-  //       }
-  //     },1000);
-  //   }
-  //   self.data._lastEdit = +new Date(); 
-  // });
+  this.data._dataEditor.on('change', function(cm){
+    self.data._data = cm.getValue();
+    if( !self.data._updateInterval ) {
+      self.data._valueDeps.changed();
+      self.data._updateInterval = setInterval( function(){
+        self.data._valueDeps.changed();
+        if(+new Date() - self.data._lastEdit > 1000 ) {
+          clearInterval( self.data._updateInterval );
+          self.data._updateInterval = null;
+        }
+      },1000);
+    }
+    self.data._lastEdit = +new Date(); 
+  });
   
   // var codeEditor = CodeMirror(this.find('.codeEditor'),{
   //   value: code,
@@ -181,7 +181,7 @@ Template.llmd_redisc_edit.rendered = function(){
     var title = self.find('input[name=title]') && self.find('input[name=title]').value;
     
     return {
-      data: self.data._ace.getValue(),
+      data: self.data._dataEditor.getValue(),
       // code: codeEditor.getValue(),
       tags: tags,
       title: title
