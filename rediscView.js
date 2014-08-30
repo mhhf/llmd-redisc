@@ -170,7 +170,7 @@ Template.llmd_redisc_edit.rendered = function(){
   //   lines: 10
   // });
   
-  $('select').selectize({
+  $('select[name=tags]').selectize({
     create: true, 
     onChange: function(t){
       tags = t;
@@ -179,18 +179,29 @@ Template.llmd_redisc_edit.rendered = function(){
   
   this.data.buildAtom = function(){
     var title = self.find('input[name=title]') && self.find('input[name=title]').value;
+    var owner = self.find('[name=owner] :checked').value;
+    var rights = self.find('[name=rights]:checked').value;
     
     return {
       data: self.data._dataEditor.getValue(),
       // code: codeEditor.getValue(),
       tags: tags,
-      title: title
+      title: title,
+      owner: owner,
+      _rights: rights
     }
   }
   
 }
 
 Template.llmd_redisc_edit.helpers({
+  isOwner: function( atom ){
+    return (atom.get().owner == this)?'selected':'';
+  },
+  checked: function( right ){
+    var atom = this && this.get && this.get();
+    return atom && atom._rights == right? 'checked':'';
+  },
   onConnect: function(a,b){
     console.log( this._ace );
   },
@@ -250,6 +261,9 @@ Template.llmd_redisc_edit.helpers({
     } else {
       return 'none'
     }
+  },
+  owners: function(){
+    return Meteor.user().profile.groups;
   }
 });
 

@@ -1,5 +1,8 @@
+// [TODO] - refactor nested to children
 LLMD.registerPackage("redisc", {
-  shema: [{
+  shema: [
+  LLMD.AtomSchema,
+  {    
     data: {
       type: String,
       defaultValue: ''
@@ -12,18 +15,6 @@ LLMD.registerPackage("redisc", {
       type: String,
       defaultValue: ''
     },
-    upvotes: {
-      type: [String],
-      defaultValue: []
-    },
-    downvotes: {
-      type: [String],
-      defaultValue: [] 
-    },
-    score: {
-      type: Number,
-      defaultValue: 0
-    },
     nested: {
       type: [String],
       defaultValue: []
@@ -34,7 +25,7 @@ LLMD.registerPackage("redisc", {
     },
     tags: {
       type: [String],
-      defaultValue: 0
+      defaultValue: []
     },
     root: {
       type: String,
@@ -45,44 +36,9 @@ LLMD.registerPackage("redisc", {
       autoValue: function(){
         return new Date();
       }
-    },
-    updatedOn: {
-      type: Date,
-      autoValue: function(){
-        return new Date();
-      }
-    },
-    user: {
-      type: Object
-    },
-    "user.name": {
-      type: String,
-      autoValue: function(){
-        return Meteor.user().profile.name;
-      }
-    },
-    "user._id": {
-      type: String,
-      autoValue: function(){
-        return Meteor.userId();
-      }
     }
   }],
   nested: ['nested'],
-  // [TODO] - is it really nessesery?
-  // dataFilter: function( params, rawData ){
-  //   var data = "";
-  //     
-  //   if( rawData.length && rawData.length>0 ) {
-  //     for( var i in rawData ) {
-  //       data+= rawData[i].data;
-  //     }
-  //   }
-  //   
-  //   return data;
-  // },
-  
-  
   
   // is fired on an atom inside the collection
   preprocess: function( ast, cb ){
@@ -97,7 +53,7 @@ LLMD.registerPackage("redisc", {
     } else {
       ast.comments += 1;
     }
-    
+     
     // each tag
     ast.tags && ast.tags.forEach( function( tag ){
       var tagO = GlobalTags.findOne({ _id: tag });
