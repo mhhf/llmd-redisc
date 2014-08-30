@@ -147,6 +147,15 @@ Template.llmd_redisc_edit.rendered = function(){
     autofocus: !isRoot
   });
   
+  this.data._dataEditor.on('cursorActivity', function( cm ){
+    var line = cm.doc.getCursor().line;
+    var numLines = cm.doc.lineCount();
+    var nscroll = (line/numLines)
+    var dh = $('#markdownWrapper').height() - 600;
+    if( dh > 0)
+      $('#preview-md').scrollTop( dh * nscroll  )
+  })
+  
   this.data._dataEditor.on('change', function(cm){
     self.data._data = cm.getValue();
     if( !self.data._updateInterval ) {

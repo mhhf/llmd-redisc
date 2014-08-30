@@ -36,7 +36,9 @@
           <!-- {{> sharejsAce docid=getId id="ace" callback=config onConnect=onConnect}} -->
         </div>
         <div id="preview-md" class="{{getViewClass}}">
-          {{>llmd getEditorData }}
+          <div id="markdownWrapper">
+            {{>llmd getEditorData }}
+          </div>
         </div>
       </div>
 
