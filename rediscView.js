@@ -144,7 +144,9 @@ Template.llmd_redisc_edit.rendered = function(){
     lineNumbers: true,
     lines: 10,
     dragDrop: false,
-    autofocus: !isRoot
+    autofocus: !isRoot,
+    tabSize: 2,
+    extraKeys: {Tab: function(cm) { cm.replaceSelection("  ", "end"); }}
   });
   
   this.data._dataEditor.on('cursorActivity', function( cm ){
